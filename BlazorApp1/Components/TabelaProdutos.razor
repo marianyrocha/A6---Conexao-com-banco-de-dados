@@ -19,6 +19,10 @@
                 <td>@p.Nome</td>
                 <td>@p.Quantidade</td>
                 <td>@p.Preco</td>
+                <td><button class="btn btn-danger btn-sm"
+                            @onclick="() => excluir.InvokeAsync(p)"
+                            >Excluir</button></td>
+                
             </tr>
         }
 
@@ -33,6 +37,8 @@
 
     [Parameter] 
     public List<Produto> produtos { get; set; } = new();
+    [Parameter] 
+    public EventCallback<Produto> excluir { get; set; } = new();
 
 }
 

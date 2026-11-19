@@ -1,12 +1,15 @@
 @page "/produtos"
 @using BlazorApp1.Components.Models
+@using BlazorApp1.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<LojaContext> DbFactory
 <div class="row">
     <Cartao Titulo="Produtos">
         <FormProduto AdicionarProduto="AdicionarProduto"/>
     </Cartao>
 
     <div class="col-md-8">
-        <TabelaProdutos produtos="produtos"/>
+        <TabelaProdutos produtos="produtos" excluir="Excluir"/>
         @if (produtos.Count == 0)
         {
             <AvisoVazio Mensagem="Nenhum produto cadastrado"/>
@@ -20,8 +23,28 @@
     
     private List<Produto> produtos = new();
 
-    private void AdicionarProduto(Produto novo)
+    protected override async Task OnInitializedAsync()
     {
-        produtos.Add(novo);
+        using var db = DbFactory.CreateDbContext();
+        produtos = await db.Produtos.ToListAsync();
     }
+    private async Task AdicionarProduto(Produto novo)
+    {
+        using var db = DbFactory.CreateDbContext();
+        db.Produtos.Add(novo);
+        await db.SaveChangesAsync();
+        produtos.Add(novo);
+        
+    }
+
+    private async Task Excluir(Produto p)
+    {
+        using var db = DbFactory.CreateDbContext();
+        db.Produtos.Remove(p);
+        await db.SaveChangesAsync();
+        produtos.Remove(p);
+
+    }
+    
+    
 }

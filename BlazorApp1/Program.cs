@@ -1,10 +1,15 @@
 using BlazorApp1.Components;
+using BlazorApp1.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+    
+var connetionString = builder.Configuration.GetConnectionString("loja");
+
+builder.Services.AddDbContextFactory<LojaContext>(options => options.UseMySQL(connetionString!));
 
 var app = builder.Build();
 
